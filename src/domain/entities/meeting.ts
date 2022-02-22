@@ -1,7 +1,12 @@
 import { Entity } from '@/core/domain/entities';
+import { isBefore } from 'date-fns';
 import { Group, Lecture, Teacher } from '.';
-import { InvalidNameError } from '../errors/invalid-name-error';
-import { TeacherNotAvailableToLectureError } from '../errors/teacher-not-available-lecture-error';
+import {
+  InvalidNameError,
+  TeacherNotAvailableToLectureError,
+  PastDateError,
+  LectureIsOnlineError,
+} from '../errors';
 
 type MeetingProps = {
   name: string;
@@ -20,7 +25,12 @@ export class Meeting extends Entity<MeetingProps> {
   static create(
     { name, groups, lecture, teacher, startDate, endDate }: MeetingProps,
     id?: string,
-  ): Meeting | InvalidNameError | TeacherNotAvailableToLectureError {
+  ):
+    | Meeting
+    | InvalidNameError
+    | TeacherNotAvailableToLectureError
+    | LectureIsOnlineError
+    | PastDateError {
     if (name.trim().length < 3 || name.trim().length > 256) {
       return new InvalidNameError(name);
     }
@@ -35,6 +45,12 @@ export class Meeting extends Entity<MeetingProps> {
         teacher.props.name,
         lecture.props.name,
       );
+    }
+    if (meeting.props.lecture.props.isOnline) {
+      return new LectureIsOnlineError(meeting.props.lecture.props.name);
+    }
+    if (isBefore(meeting.props.startDate, Date.now())) {
+      return new PastDateError(meeting.props.startDate.toString());
     }
 
     return meeting;
