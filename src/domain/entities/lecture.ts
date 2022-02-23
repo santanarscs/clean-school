@@ -18,4 +18,12 @@ export class Lecture extends Entity<LectureProps> {
     const lecture = new Lecture({ name, subject, isOnline }, id);
     return lecture;
   }
+
+  equals(other: Lecture) {
+    return (
+      this.props.name === other.props.name &&
+      this.props.subject === other.props.subject &&
+      this.props.isOnline === other.props.isOnline
+    );
+  }
 }
