@@ -1,5 +1,4 @@
 import { Group, Lecture, Meeting, Subject, Teacher } from '@/domain/entities';
-import { subDays, subHours } from 'date-fns';
 
 describe('Meeting domain Entity', () => {
   beforeEach(() => {
