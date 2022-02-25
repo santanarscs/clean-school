@@ -1,55 +1,59 @@
-import { Entity } from '@/core/domain/entities';
 import { Lecture } from '.';
 
-type ChapterProps = {
-  name: string;
-  lectures?: Lecture[];
-};
-export class Chapter extends Entity<ChapterProps> {
-  private constructor(props: ChapterProps, id?: string) {
-    super(props, id);
-  }
+export class Chapter {
+  private readonly lectures: Lecture[] = [];
 
-  static create({ name }: ChapterProps, id?: string): Chapter {
-    const chapter = new Chapter({ name }, id);
+  private constructor(private readonly name: string) {}
+
+  static create(name: string): Chapter {
+    const chapter = new Chapter(name);
     return chapter;
   }
 
-  equals(other: Chapter) {
-    return this.props.name === other.props.name;
+  get numberOfLectures(): number {
+    return this.lectures.length;
   }
 
-  public addLecture(chapter: Lecture) {
-    if (this.props.lectures) {
-      this.props.lectures.push(chapter);
-    } else {
-      this.props.lectures = [chapter];
+  equals(other: Chapter) {
+    return this.name === other.name;
+  }
+
+  public addLecture(lecture: Lecture) {
+    if (!this.includesLectureWithSameName(lecture)) {
+      this.lectures.push(lecture);
     }
   }
 
-  public removeLecture(lecture: Lecture) {
-    if (this.props.lectures)
-      this.props.lectures = this.props.lectures.filter(
-        item => item !== lecture,
-      );
+  private includesLectureWithSameName(lecture: Lecture): boolean {
+    return !!this.lectures.find(lec => lec.props.name === lecture.props.name);
+  }
+
+  includes(lecture: Lecture): boolean {
+    return !!this.lectures.find(lec => lec.equals(lecture));
   }
 
   move(lecture: Lecture, to: number): void {
-    if ((this.props.lectures && to > this.props.lectures?.length) || to <= 0) {
+    if (to > this.lectures.length || to <= 0) {
       return;
     }
-    const from = this.position(lecture) - 1;
-    const element = this.props.lectures?.splice(from, 1)[0] as Lecture;
-    this.props.lectures?.splice(to - 1, 0, element);
+    const position = this.position(lecture);
+    if (position) {
+      const from = position - 1;
+      const element = this.lectures.splice(from, 1)[0];
+      this.lectures.splice(to - 1, 0, element);
+    }
   }
 
-  position(lecture: Lecture): number {
-    const lectureInChapter = this.props.lectures?.find(lec =>
-      lec.equals(lecture),
-    );
+  remove(lecture: Lecture) {
+    const position = this.position(lecture);
+    if (position) this.lectures.splice(position, 1);
+  }
+
+  position(lecture: Lecture): number | undefined {
+    const lectureInChapter = this.lectures.find(lec => lec.equals(lecture));
     if (!lectureInChapter) {
-      return;
+      return undefined;
     }
-    return this.props.lectures?.indexOf(lectureInChapter) + 1;
+    return this.lectures.indexOf(lectureInChapter) + 1;
   }
 }
