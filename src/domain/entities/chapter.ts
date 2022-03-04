@@ -3,11 +3,15 @@ import { Lecture } from '.';
 export class Chapter {
   private readonly lectures: Lecture[] = [];
 
-  private constructor(private readonly name: string) {}
+  private constructor(private readonly _name: string) {}
 
   static create(name: string): Chapter {
     const chapter = new Chapter(name);
     return chapter;
+  }
+
+  get name() {
+    return this._name;
   }
 
   get numberOfLectures(): number {
@@ -42,11 +46,6 @@ export class Chapter {
       const element = this.lectures.splice(from, 1)[0];
       this.lectures.splice(to - 1, 0, element);
     }
-  }
-
-  remove(lecture: Lecture) {
-    const position = this.position(lecture);
-    if (position) this.lectures.splice(position, 1);
   }
 
   position(lecture: Lecture): number | undefined {
