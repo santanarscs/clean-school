@@ -6,3 +6,5 @@ export * from './group';
 export * from './lecture';
 export * from './chapter';
 export * from './meeting';
+
+export * from './name';
