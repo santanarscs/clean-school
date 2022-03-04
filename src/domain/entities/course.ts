@@ -1,20 +1,25 @@
-import { Entity } from '@/core/domain/entities';
+import { Either, left, right } from '@/core/domain/entities';
 import { InvalidNameError } from '../errors/invalid-name-error';
+import { Name } from '.';
 
-type CourseProps = {
+interface ICreateCourseData {
   name: string;
-};
+}
 
-export class Course extends Entity<CourseProps> {
-  private constructor(props: CourseProps, id?: string) {
-    super(props, id);
+export class Course {
+  private constructor(private _name: Name) {}
+
+  get name() {
+    return this._name;
   }
 
-  static create({ name }: CourseProps, id?: string): Course | InvalidNameError {
-    if (name.trim().length < 3 || name.trim().length > 256) {
-      return new InvalidNameError(name);
+  static create(data: ICreateCourseData): Either<InvalidNameError, Course> {
+    const nameOrError = Name.create(data.name);
+
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
     }
-    const course = new Course({ name }, id);
-    return course;
+    const name = nameOrError.value as Name;
+    return right(new Course(name));
   }
 }
