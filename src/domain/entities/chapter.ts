@@ -1,58 +1,54 @@
-import { Lecture, Element } from '.';
+import { Either, left, right } from '@/core/domain/entities';
+import { Lecture, Element, Container, Name } from '.';
+import { ExistingElementError, InvalidNameError } from '../errors';
+
+interface ICreateChapterData {
+  name: string;
+}
 
 export class Chapter implements Element {
-  private readonly lectures: Lecture[] = [];
+  private readonly lectures: Container<Lecture> = new Container<Lecture>();
 
-  private constructor(private readonly _name: string) {}
-
-  static create(name: string): Chapter {
-    const chapter = new Chapter(name);
-    return chapter;
-  }
+  private constructor(private readonly _name: Name) {}
 
   get name() {
     return this._name;
   }
 
   get numberOfLectures(): number {
-    return this.lectures.length;
+    return this.lectures.numberOfElements;
   }
 
   equals(other: Chapter) {
     return this.name === other.name;
   }
 
-  public addLecture(lecture: Lecture) {
-    if (!this.includesLectureWithSameName(lecture)) {
-      this.lectures.push(lecture);
-    }
-  }
-
-  private includesLectureWithSameName(lecture: Lecture): boolean {
-    return !!this.lectures.find(lec => lec.props.name === lecture.props.name);
+  add(lecture: Lecture): Either<ExistingElementError, void> {
+    return this.lectures.add(lecture);
   }
 
   includes(lecture: Lecture): boolean {
-    return !!this.lectures.find(lec => lec.equals(lecture));
+    return this.lectures.includes(lecture);
   }
 
-  move(lecture: Lecture, to: number): void {
-    if (to > this.lectures.length || to <= 0) {
-      return;
-    }
-    const position = this.position(lecture);
-    if (position) {
-      const from = position - 1;
-      const element = this.lectures.splice(from, 1)[0];
-      this.lectures.splice(to - 1, 0, element);
-    }
+  move(lecture: Lecture, position: number): void {
+    this.lectures.move(lecture, position);
   }
 
-  position(lecture: Lecture): number | undefined {
-    const lectureInChapter = this.lectures.find(lec => lec.equals(lecture));
-    if (!lectureInChapter) {
-      return undefined;
+  position(lecture: Lecture): number {
+    return this.lectures.position(lecture) as number;
+  }
+
+  remove(lecture: Lecture): void {
+    this.lectures.remove(lecture);
+  }
+
+  static create(data: ICreateChapterData): Either<InvalidNameError, Chapter> {
+    const nameOrError = Name.create(data.name);
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
     }
-    return this.lectures.indexOf(lectureInChapter) + 1;
+    const name = nameOrError.value as Name;
+    return right(new Chapter(name));
   }
 }
