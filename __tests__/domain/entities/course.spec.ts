@@ -32,7 +32,7 @@ describe('Course domain Entity', () => {
       name: 'Course1',
       description: 'Description Course1',
     }).value as Course;
-    const chapter = Chapter.create('Chapter 1');
+    const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
 
     course.add(chapter);
     expect(course.numberOfChapters).toBe(1);
@@ -43,7 +43,7 @@ describe('Course domain Entity', () => {
       name: 'Course1',
       description: 'Description Course1',
     }).value as Course;
-    const chapter = Chapter.create('Chapter 1');
+    const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
 
     course.add(chapter);
     course.add(chapter);
@@ -55,7 +55,7 @@ describe('Course domain Entity', () => {
       name: 'Course1',
       description: 'Description Course1',
     }).value as Course;
-    const chapter = Chapter.create('Chapter 1');
+    const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
     course.add(chapter);
     expect(course.includes(chapter)).toBeTruthy();
   });
@@ -65,9 +65,9 @@ describe('Course domain Entity', () => {
       name: 'Course 1',
       description: 'Description',
     }).value as Course;
-    const chapter1 = Chapter.create('Chapter 1');
-    const chapter2 = Chapter.create('Chapter 2');
-    const chapter3 = Chapter.create('Chapter 3');
+    const chapter1 = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
+    const chapter2 = Chapter.create({ name: 'Chapter 2' }).value as Chapter;
+    const chapter3 = Chapter.create({ name: 'Chapter 3' }).value as Chapter;
     course.add(chapter1);
     course.add(chapter2);
     course.add(chapter3);
@@ -83,9 +83,9 @@ describe('Course domain Entity', () => {
       name: 'Course 1',
       description: 'Description',
     }).value as Course;
-    const chapter1 = Chapter.create('Chapter 1');
-    const chapter2 = Chapter.create('Chapter 2');
-    const chapter3 = Chapter.create('Chapter 3');
+    const chapter1 = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
+    const chapter2 = Chapter.create({ name: 'Chapter 2' }).value as Chapter;
+    const chapter3 = Chapter.create({ name: 'Chapter 3' }).value as Chapter;
 
     course.add(chapter1);
     course.add(chapter2);
@@ -100,9 +100,9 @@ describe('Course domain Entity', () => {
       name: 'Course 1',
       description: 'Description',
     }).value as Course;
-    const chapter1 = Chapter.create('Chapter 1');
-    const chapter2 = Chapter.create('Chapter 2');
-    const chapter3 = Chapter.create('Chapter 3');
+    const chapter1 = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
+    const chapter2 = Chapter.create({ name: 'Chapter 2' }).value as Chapter;
+    const chapter3 = Chapter.create({ name: 'Chapter 3' }).value as Chapter;
 
     course.add(chapter1);
     course.add(chapter2);
@@ -116,9 +116,9 @@ describe('Course domain Entity', () => {
       name: 'Course 1',
       description: 'Description',
     }).value as Course;
-    const chapter1 = Chapter.create('Chapter 1');
-    const chapter2 = Chapter.create('Chapter 2');
-    const chapter3 = Chapter.create('Chapter 3');
+    const chapter1 = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
+    const chapter2 = Chapter.create({ name: 'Chapter 2' }).value as Chapter;
+    const chapter3 = Chapter.create({ name: 'Chapter 3' }).value as Chapter;
     course.add(chapter1);
     course.add(chapter2);
     course.add(chapter3);
@@ -132,9 +132,9 @@ describe('Course domain Entity', () => {
       name: 'Course 1',
       description: 'Description',
     }).value as Course;
-    const chapter1 = Chapter.create('Chapter 1');
-    const chapter2 = Chapter.create('Chapter 2');
-    const chapter3 = Chapter.create('Chapter 3');
+    const chapter1 = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
+    const chapter2 = Chapter.create({ name: 'Chapter 2' }).value as Chapter;
+    const chapter3 = Chapter.create({ name: 'Chapter 3' }).value as Chapter;
     course.add(chapter1);
     course.add(chapter2);
 
