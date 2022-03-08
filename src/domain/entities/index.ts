@@ -8,3 +8,5 @@ export * from './chapter';
 export * from './meeting';
 
 export * from './name';
+export * from './element';
+export * from './container';
