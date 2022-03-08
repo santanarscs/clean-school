@@ -1,15 +1,27 @@
-import { Entity } from '@/core/domain/entities';
+import { Either, left, right } from '@/core/domain/entities';
+import { Element, Name } from '.';
+import { InvalidNameError } from '../errors';
 
-type StudentProps = {
+interface ICreateStudent {
   name: string;
-};
-export class Student extends Entity<StudentProps> {
-  private constructor(props: StudentProps, id?: string) {
-    super(props, id);
+}
+export class Student implements Element {
+  private constructor(private readonly _name: Name) {}
+
+  get name() {
+    return this._name;
   }
 
-  static create({ name }: StudentProps, id?: string): Student {
-    const student = new Student({ name }, id);
-    return student;
+  equals(other: Student): boolean {
+    return this.name === other.name;
+  }
+
+  static create(data: ICreateStudent): Either<InvalidNameError, Student> {
+    const nameOrError = Name.create(data.name);
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
+    const name = nameOrError.value as Name;
+    return right(new Student(name));
   }
 }
