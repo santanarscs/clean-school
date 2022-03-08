@@ -1,32 +1,41 @@
-import { Entity } from '@/core/domain/entities';
-import { Student } from '.';
+import { Either, left, right } from '@/core/domain/entities';
+import { Student, Name, Container } from '.';
+import { ExistingElementError, InvalidNameError } from '../errors';
 
-type GroupProps = {
+interface ICreateGroupData {
   name: string;
-  students?: Student[];
-};
-export class Group extends Entity<GroupProps> {
-  private constructor(props: GroupProps, id?: string) {
-    super(props, id);
+}
+export class Group {
+  private readonly students: Container<Student> = new Container<Student>();
+
+  private constructor(private readonly _name: Name) {}
+
+  get name() {
+    return this._name;
   }
 
-  static create({ name }: GroupProps, id?: string): Group {
-    const group = new Group({ name }, id);
-    return group;
+  get numberOfStudents() {
+    return this.students.numberOfElements;
   }
 
-  public addStudent(student: Student) {
-    if (this.props.students) {
-      this.props.students.push(student);
-    } else {
-      this.props.students = [student];
+  add(student: Student): Either<ExistingElementError, void> {
+    return this.students.add(student);
+  }
+
+  includes(student: Student): boolean {
+    return this.students.includes(student);
+  }
+
+  remove(student: Student): void {
+    this.students.remove(student);
+  }
+
+  static create(data: ICreateGroupData): Either<InvalidNameError, Group> {
+    const nameOrError = Name.create(data.name);
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
     }
-  }
-
-  public removeStudent(student: Student) {
-    if (this.props.students)
-      this.props.students = this.props.students.filter(
-        item => item !== student,
-      );
+    const name = nameOrError.value as Name;
+    return right(new Group(name));
   }
 }
