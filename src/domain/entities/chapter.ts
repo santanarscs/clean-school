@@ -1,6 +1,6 @@
-import { Lecture } from '.';
+import { Lecture, Element } from '.';
 
-export class Chapter {
+export class Chapter implements Element {
   private readonly lectures: Lecture[] = [];
 
   private constructor(private readonly _name: string) {}
