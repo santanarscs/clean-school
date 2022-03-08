@@ -9,7 +9,7 @@ describe('Chapter domain Entity', () => {
     expect(error.message).toEqual(`Invalid name: ${invalidName}.`);
   });
 
-  it('should be not create course with max invalid length name', () => {
+  it('should be not create chapter with max invalid length name', () => {
     const invalidName = 'C'.repeat(257);
 
     const error = Chapter.create({ name: invalidName }).value as Error;
