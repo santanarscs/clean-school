@@ -3,7 +3,6 @@ import { Group, Student } from '@/domain/entities';
 describe('Group domain Entity', () => {
   it('should be not create group with min invalid length name', () => {
     const invalidName = 'G   ';
-
     const error = Group.create({ name: invalidName }).value as Error;
     expect(error.name).toEqual('InvalidNameError');
     expect(error.message).toEqual(`Invalid name: ${invalidName}.`);
@@ -11,7 +10,6 @@ describe('Group domain Entity', () => {
 
   it('should be not create group with max invalid length name', () => {
     const invalidName = 'G'.repeat(257);
-
     const error = Group.create({ name: invalidName }).value as Error;
     expect(error.name).toEqual('InvalidNameError');
     expect(error.message).toEqual(`Invalid name: ${invalidName}.`);
@@ -57,5 +55,12 @@ describe('Group domain Entity', () => {
     const student = Student.create({ name: 'Student 1' }).value as Student;
     group.add(student);
     expect(group.includes(student)).toBeTruthy();
+  });
+
+  it('should be return true if equals group', () => {
+    const name = 'Group';
+    const group1 = Group.create({ name }).value as Group;
+    const group2 = Group.create({ name }).value as Group;
+    expect(group1.equals(group2)).toBeTruthy();
   });
 });

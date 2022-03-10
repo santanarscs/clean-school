@@ -1,11 +1,11 @@
 import { Either, left, right } from '@/core/domain/entities';
-import { Student, Name, Container } from '.';
+import { Student, Name, Container, Element } from '.';
 import { ExistingElementError, InvalidNameError } from '../errors';
 
 interface ICreateGroupData {
   name: string;
 }
-export class Group {
+export class Group implements Element {
   private readonly students: Container<Student> = new Container<Student>();
 
   private constructor(private readonly _name: Name) {}
@@ -26,8 +26,12 @@ export class Group {
     return this.students.includes(student);
   }
 
-  remove(student: Student): void {
-    this.students.remove(student);
+  remove(student: Student) {
+    return this.students.remove(student);
+  }
+
+  equals(other: Group): boolean {
+    return this.name.value === other.name.value;
   }
 
   static create(data: ICreateGroupData): Either<InvalidNameError, Group> {
