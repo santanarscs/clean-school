@@ -1,29 +1,48 @@
-import { Entity } from '@/core/domain/entities';
+import { Either, left, right } from '@/core/domain/entities';
 import { Subject } from '.';
+import { InvalidNameError } from '../errors';
+import { Name } from './name';
 
-type LectureProps = {
+interface ICreateLectureData {
   name: string;
   subject: Subject;
   isOnline: boolean;
-};
-export class Lecture extends Entity<LectureProps> {
-  private constructor(props: LectureProps, id?: string) {
-    super(props, id);
+}
+export class Lecture {
+  private constructor(
+    private readonly _name: Name,
+    private readonly _subject: Subject,
+    private readonly _isOnline: boolean,
+  ) {}
+
+  get name() {
+    return this._name;
   }
 
-  static create(
-    { name, subject, isOnline }: LectureProps,
-    id?: string,
-  ): Lecture {
-    const lecture = new Lecture({ name, subject, isOnline }, id);
-    return lecture;
+  get subject(): Subject {
+    return this._subject;
+  }
+
+  get isOnline(): boolean {
+    return this._isOnline;
+  }
+
+  static create(data: ICreateLectureData): Either<InvalidNameError, Lecture> {
+    const nameOrError = Name.create(data.name);
+
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
+    const name = nameOrError.value as Name;
+    const { subject, isOnline } = data;
+    return right(new Lecture(name, subject, isOnline));
   }
 
   equals(other: Lecture) {
     return (
-      this.props.name === other.props.name &&
-      this.props.subject === other.props.subject &&
-      this.props.isOnline === other.props.isOnline
+      this.name === other.name &&
+      this._subject === other._subject &&
+      this.isOnline === other.isOnline
     );
   }
 }
