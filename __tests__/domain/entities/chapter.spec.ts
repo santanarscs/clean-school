@@ -23,12 +23,12 @@ describe('Chapter domain Entity', () => {
   });
 
   it('should be able to add a lecture for a chapter', () => {
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture = Lecture.create({
       name: 'Lecture',
       isOnline: true,
       subject,
-    }) as Lecture;
+    }).value as Lecture;
     const chapter = Chapter.create({ name: 'Chapter 1' }).value as Chapter;
     chapter.add(lecture);
     expect(chapter.numberOfLectures).toEqual(1);
@@ -36,12 +36,12 @@ describe('Chapter domain Entity', () => {
 
   it('should not be able to add a lecture with duplicate name in a chapter', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture = Lecture.create({
       name: 'Lecture',
       isOnline: true,
       subject,
-    }) as Lecture;
+    }).value as Lecture;
     chapter.add(lecture);
     chapter.add(lecture);
     expect(chapter.numberOfLectures).toEqual(1);
@@ -49,12 +49,12 @@ describe('Chapter domain Entity', () => {
 
   it('should be able return true if exist lecture in chapter', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture = Lecture.create({
       name: 'Lecture',
       isOnline: true,
       subject,
-    }) as Lecture;
+    }).value as Lecture;
     chapter.add(lecture);
 
     expect(chapter.includes(lecture)).toBeTruthy();
@@ -62,17 +62,17 @@ describe('Chapter domain Entity', () => {
 
   it('should be able to add many lectures for a chapter', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       isOnline: true,
       subject,
-    }) as Lecture;
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       isOnline: true,
       subject,
-    }) as Lecture;
+    }).value as Lecture;
     chapter.add(lecture1);
     chapter.add(lecture2);
 
@@ -81,22 +81,22 @@ describe('Chapter domain Entity', () => {
 
   it('should not be able to move negative lecture position ', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture3 = Lecture.create({
       name: 'Lecture 3',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
 
     chapter.add(lecture1);
     chapter.add(lecture2);
@@ -107,22 +107,22 @@ describe('Chapter domain Entity', () => {
   });
   it('should not be able to move a position higher than lectures', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture3 = Lecture.create({
       name: 'Lecture 3',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
 
     chapter.add(lecture1);
     chapter.add(lecture2);
@@ -135,22 +135,22 @@ describe('Chapter domain Entity', () => {
   });
   it('should be able to move a lecture position', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture3 = Lecture.create({
       name: 'Lecture 3',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
 
     chapter.add(lecture1);
     chapter.add(lecture2);
@@ -163,22 +163,22 @@ describe('Chapter domain Entity', () => {
   });
   it('should not be able to move a lecture position if not exist', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture3 = Lecture.create({
       name: 'Lecture 3',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
 
     chapter.add(lecture1);
     chapter.add(lecture2);
@@ -190,22 +190,22 @@ describe('Chapter domain Entity', () => {
 
   it('should be able to remove chapter', () => {
     const chapter = Chapter.create({ name: 'Chapter' }).value as Chapter;
-    const subject = Subject.create({ name: 'Subject 1' });
+    const subject = Subject.create({ name: 'Subject 1' }).value as Subject;
     const lecture1 = Lecture.create({
       name: 'Lecture 1',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture2 = Lecture.create({
       name: 'Lecture 2',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
     const lecture3 = Lecture.create({
       name: 'Lecture 3',
       subject,
       isOnline: false,
-    });
+    }).value as Lecture;
 
     chapter.add(lecture1);
     chapter.add(lecture2);
