@@ -1,69 +1,91 @@
-import { Entity } from '@/core/domain/entities';
+import { Either, left, right } from '@/core/domain/entities';
 import { isBefore } from 'date-fns';
-import { Group, Lecture, Teacher } from '.';
+import { Group, Lecture, Name, Teacher, Container } from '.';
 import {
   InvalidNameError,
   TeacherNotAvailableToLectureError,
   PastDateError,
   LectureIsOnlineError,
+  ExistingElementError,
 } from '../errors';
 
-type MeetingProps = {
+interface ICreateMeetingData {
   name: string;
-  groups: Group[];
   lecture: Lecture;
   teacher: Teacher;
   startDate: Date;
   endDate: Date;
-};
+}
 
-export class Meeting extends Entity<MeetingProps> {
-  private constructor(props: MeetingProps, id?: string) {
-    super(props, id);
+export class Meeting {
+  private readonly groups: Container<Group> = new Container<Group>();
+
+  private constructor(
+    private readonly _name: Name,
+    private readonly lecture: Lecture,
+    private readonly teacher: Teacher,
+    private readonly startDate: Date,
+    private readonly endDate: Date,
+  ) {}
+
+  get name() {
+    return this._name;
+  }
+
+  get numberOfGroups(): number {
+    return this.groups.numberOfElements;
+  }
+
+  add(group: Group): Either<ExistingElementError, void> {
+    return this.groups.add(group);
+  }
+
+  includes(group: Group): boolean {
+    return this.groups.includes(group);
+  }
+
+  remove(group: Group): void {
+    this.groups.remove(group);
   }
 
   static create(
-    { name, groups, lecture, teacher, startDate, endDate }: MeetingProps,
-    id?: string,
-  ):
-    | Meeting
+    data: ICreateMeetingData,
+  ): Either<
     | InvalidNameError
     | TeacherNotAvailableToLectureError
     | LectureIsOnlineError
-    | PastDateError {
-    if (name.trim().length < 3 || name.trim().length > 256) {
-      return new InvalidNameError(name);
+    | PastDateError,
+    Meeting
+  > {
+    const nameOrError = Name.create(data.name);
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
     }
+    const name = nameOrError.value as Name;
 
-    const meeting = new Meeting(
-      { name, groups, lecture, teacher, startDate, endDate },
-      id,
-    );
+    const teacher = Teacher.create({
+      name: data.teacher.name.value,
+      subjects: data.teacher.subjects,
+    }).value as Teacher;
 
-    if (!meeting.isTeacherAvailableToLecture()) {
-      return new TeacherNotAvailableToLectureError(
-        teacher.props.name,
-        lecture.props.name,
+    if (!teacher.validateAvailableToTeach(data.lecture.subject)) {
+      return left(
+        new TeacherNotAvailableToLectureError(
+          teacher.name.value,
+          data.lecture.name.value,
+        ),
       );
     }
-    if (meeting.props.lecture.props.isOnline) {
-      return new LectureIsOnlineError(meeting.props.lecture.props.name);
-    }
-    if (isBefore(meeting.props.startDate, Date.now())) {
-      return new PastDateError(meeting.props.startDate.toString());
+    if (data.lecture.isOnline) {
+      return left(new LectureIsOnlineError(data.lecture.name.value));
     }
 
-    return meeting;
-  }
-
-  private isTeacherAvailableToLecture(): boolean {
-    if (!this.props.teacher.props.subjects) {
-      return false;
+    if (isBefore(data.startDate, Date.now())) {
+      return left(new PastDateError(data.startDate.toString()));
     }
 
-    return !!this.props.teacher.props.subjects?.filter(
-      subject =>
-        subject.props.name === this.props.lecture.props.subject.props.name,
-    ).length;
+    const { lecture, startDate, endDate } = data;
+
+    return right(new Meeting(name, lecture, teacher, startDate, endDate));
   }
 }
