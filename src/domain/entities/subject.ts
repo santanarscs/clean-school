@@ -1,15 +1,27 @@
-import { Entity } from '@/core/domain/entities';
+import { Either, left, right } from '@/core/domain/entities';
+import { Element, Name } from '.';
+import { InvalidNameError } from '../errors';
 
-type SubjectProps = {
+interface ICreateSubjectData {
   name: string;
-};
-export class Subject extends Entity<SubjectProps> {
-  private constructor(props: SubjectProps, id?: string) {
-    super(props, id);
+}
+export class Subject implements Element {
+  private constructor(private readonly _name: Name) {}
+
+  get name() {
+    return this._name;
   }
 
-  static create({ name }: SubjectProps, id?: string): Subject {
-    const subject = new Subject({ name }, id);
-    return subject;
+  equals(item: Subject): boolean {
+    return this.name === item.name;
+  }
+
+  static create(data: ICreateSubjectData): Either<InvalidNameError, Subject> {
+    const nameOrError = Name.create(data.name);
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
+    const name = nameOrError.value as Name;
+    return right(new Subject(name));
   }
 }
